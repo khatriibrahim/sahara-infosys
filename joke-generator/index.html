@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Joke Generator - Sahara Infosys</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --secondary: #6c757d;
+            --success: #198754;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .joke-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .joke-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .joke-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .joke-box.loading {
+            opacity: 0.6;
+        }
+
+        .joke-text {
+            font-weight: 500;
+        }
+
+        .joke-meta {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .meta-badge {
+            background: #f0f0f0;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .meta-badge i {
+            margin-right: 5px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn-custom {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 24px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-copy {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-copy:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-copy.copied {
+            background: #198754;
+            color: white;
+        }
+
+        .category-select {
+            margin: 20px 0;
+        }
+
+        .category-select select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner-border {
+            color: #667eea;
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .joke-container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .joke-box {
+                padding: 20px;
+                font-size: 1rem;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn-custom {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="joke-container">
+            <div class="header">
+                <h1><i class="fas fa-laugh-beam"></i> Joke Generator</h1>
+                <p>Sahara Infosys © Ibrahim Khatri since 2014</p>
+            </div>
+
+            <div class="category-select">
+                <label for="categorySelect" class="form-label"><strong>Select Category:</strong></label>
+                <select id="categorySelect">
+                    <option value="random">Random (Any)</option>
+                    <option value="general">General</option>
+                    <option value="programming">Programming</option>
+                    <option value="knock-knock">Knock-Knock</option>
+                </select>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+            </div>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <div class="joke-box" id="jokeBox">
+                <div class="joke-text">Click "Get Joke" to start!</div>
+            </div>
+
+            <div class="joke-meta" id="jokeMetaDisplay" style="display: none;">
+                <div class="meta-badge" id="categoryBadge">
+                    <i class="fas fa-tag"></i> <span id="categoryLabel"></span>
+                </div>
+                <div class="meta-badge" id="typeBadge">
+                    <i class="fas fa-book"></i> <span id="typeLabel"></span>
+                </div>
+                <div class="meta-badge" id="idBadge">
+                    <i class="fas fa-hashtag"></i> <span id="idLabel"></span>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-custom btn-next" id="nextBtn" onclick="getJoke()">
+                    <i class="fas fa-lightbulb"></i> Get Joke
+                </button>
+                <button class="btn-custom btn-copy" id="copyBtn" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+
+            <div class="stats">
+                <p><strong id="jokeCount">0</strong> jokes loaded</p>
+                <small>Powered by <strong>JokeAPI</strong></small>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2014-2026 Ibrahim Khatri. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:8000/backend/api/jokes.php';
+        let currentJoke = null;
+        let jokeCount = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get initial joke
+            getJoke();
+
+            // Category change handler
+            document.getElementById('categorySelect').addEventListener('change', getJoke);
+        });
+
+        /**
+         * Fetch and display a joke
+         */
+        async function getJoke() {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('errorMessage');
+            const nextBtn = document.getElementById('nextBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const category = document.getElementById('categorySelect').value;
+
+            // Show loading state
+            loadingSpinner.style.display = 'block';
+            errorMessage.style.display = 'none';
+            nextBtn.disabled = true;
+            copyBtn.disabled = true;
+
+            try {
+                const endpoint = category === 'random' 
+                    ? `${API_URL}?action=random`
+                    : `${API_URL}?action=category&category=${category}`;
+
+                const response = await fetch(endpoint);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to fetch joke');
+                }
+
+                // Update UI with joke data
+                currentJoke = data.joke;
+                displayJoke(data);
+
+                // Update stats
+                jokeCount++;
+                document.getElementById('jokeCount').textContent = jokeCount;
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message);
+            } finally {
+                loadingSpinner.style.display = 'none';
+                nextBtn.disabled = false;
+                copyBtn.disabled = false;
+            }
+        }
+
+        /**
+         * Display joke with metadata
+         */
+        function displayJoke(data) {
+            const jokeBox = document.getElementById('jokeBox');
+            const metaDisplay = document.getElementById('jokeMetaDisplay');
+
+            // Update joke text
+            jokeBox.innerHTML = `<div class="joke-text">${data.joke}</div>`;
+
+            // Update metadata
+            document.getElementById('categoryLabel').textContent = data.category || 'N/A';
+            document.getElementById('typeLabel').textContent = data.type || 'N/A';
+            document.getElementById('idLabel').textContent = data.id || 'N/A';
+
+            // Show metadata
+            metaDisplay.style.display = 'flex';
+        }
+
+        /**
+         * Copy joke to clipboard
+         */
+        async function copyToClipboard() {
+            if (!currentJoke) {
+                showError('No joke to copy!');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(currentJoke);
+
+                // Show success feedback
+                const copyBtn = document.getElementById('copyBtn');
+                const originalHTML = copyBtn.innerHTML;
+
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                copyBtn.classList.add('copied');
+
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+
+            } catch (error) {
+                showError('Failed to copy to clipboard');
+                console.error('Copy error:', error);
+            }
+        }
+
+        /**
+         * Show error message
+         */
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+
+            errorText.textContent = message;
+            errorMessage.style.display = 'block';
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        /**
+         * Keyboard shortcuts
+         */
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' && document.activeElement !== document.getElementById('categorySelect')) {
+                event.preventDefault();
+                getJoke();
+            }
+            if (event.code === 'KeyC' && event.ctrlKey) {
+                event.preventDefault();
+                copyToClipboard();
+            }
+        });
+    </script>
+</body>
+</html>
